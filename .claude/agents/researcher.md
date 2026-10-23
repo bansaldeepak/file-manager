@@ -1,0 +1,1 @@
+../../.brief/workflow/agents/researcher.md
