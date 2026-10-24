@@ -1,15 +1,17 @@
+import { useState, useRef } from 'react';
 import './styles/tokens.css';
 import './styles/reset.css';
 import { AppShell } from './components/AppShell';
 
 function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+
   return (
     <AppShell
-      toolbar={
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 500, color: 'var(--color-text-muted)' }}>
-          Arcitae Dedupe
-        </span>
-      }
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      searchRef={searchRef}
       sidebar={
         <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: 'var(--color-text-muted)' }}>
           Folder nav — coming in T-015+
