@@ -1,5 +1,7 @@
 // Tauri command handlers — wired in as they're implemented
 
+pub mod preview;
+
 use std::path::PathBuf;
 
 #[allow(dead_code)]
@@ -20,6 +22,7 @@ pub fn validate_path_scope(path: &str, allowed_roots: &[&str]) -> Result<(), Str
 mod tests {
     use super::*;
     use std::env;
+    use std::path::Path;
 
     #[test]
     fn path_within_root_passes() {

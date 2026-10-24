@@ -4,6 +4,7 @@
 use std::sync::Mutex;
 
 mod commands;
+mod quicklook_spike;
 
 fn run_smoke_test(fixture_dir: &std::path::Path) -> i32 {
     use dedupe_core::{grouper, scanner};
@@ -55,7 +56,7 @@ fn main() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(Mutex::new(conn))
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![commands::preview::preview_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
