@@ -31,6 +31,8 @@ fn main() {
     }
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
         .manage(Mutex::new(conn))
         .invoke_handler(tauri::generate_handler![])
         .run(tauri::generate_context!())
