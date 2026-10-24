@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import './styles/tokens.css';
 import './styles/reset.css';
 import { AppShell } from './components/AppShell';
+import { Banner } from './components/Banner';
 import { EmptyState } from './components/EmptyState';
 import type { MediaTab } from './components/TabBar';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -12,12 +13,30 @@ interface Folders {
   copies?: string;
 }
 
+interface QuarantineResult {
+  fileCount: number;
+  totalBytes: number;
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes >= 1_000_000_000) return `${(bytes / 1_000_000_000).toFixed(1)} GB`;
+  if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`;
+  if (bytes >= 1_000) return `${(bytes / 1_000).toFixed(0)} KB`;
+  return `${bytes} B`;
+}
+
 function App() {
   const [activeTab, setActiveTab] = useState<MediaTab>('photos');
   const [searchQuery, setSearchQuery] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
   const [thumbnailSize, setThumbnailSize] = useState(160);
   const [folders, setFolders] = useState<Folders>({});
+  const [lastQuarantine, setLastQuarantine] = useState<QuarantineResult | null>(null);
+
+  const handleUndo = () => {
+    console.log('undo quarantine — restore command wired in Stage 4');
+    setLastQuarantine(null);
+  };
 
   useKeyboardShortcuts({
     onSearch: () => searchRef.current?.focus(),
@@ -27,7 +46,7 @@ function App() {
         searchRef.current?.blur();
       }
     },
-    onUndo: () => console.log('undo — T-022 will wire this'),
+    onUndo: lastQuarantine ? handleUndo : undefined,
     onPreview: () => console.log('preview — T-013 spike will wire this'),
   });
 
@@ -40,7 +59,7 @@ function App() {
     }
   };
 
-  const contactSheet = !folders.original ? (
+  const innerSheet = !folders.original ? (
     <EmptyState
       title="Drop a folder to get started"
       body="Drop your originals folder here, then your copies folder, to find duplicates."
@@ -58,6 +77,19 @@ function App() {
       body={`Scanned ${folders.original} and ${folders.copies}. All files are unique.`}
       action={{ label: 'Choose different folders', onClick: () => setFolders({}) }}
     />
+  );
+
+  const contactSheet = (
+    <>
+      {lastQuarantine && (
+        <Banner
+          message={`Moved ${lastQuarantine.fileCount} file${lastQuarantine.fileCount !== 1 ? 's' : ''} (${formatBytes(lastQuarantine.totalBytes)}).`}
+          onUndo={handleUndo}
+          onDismiss={() => setLastQuarantine(null)}
+        />
+      )}
+      {innerSheet}
+    </>
   );
 
   return (
