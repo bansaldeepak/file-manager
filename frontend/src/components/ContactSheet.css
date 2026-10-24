@@ -1,0 +1,128 @@
+.contact-sheet-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.dup-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.dup-group-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dup-group-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.dup-group-count {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.dup-group-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.dup-file {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: 4px;
+  transition: background 100ms;
+}
+
+.dup-file:hover:not([data-keeper='true']) {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.dup-file[data-keeper='true'] {
+  cursor: default;
+  outline: 2px solid var(--color-success);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+.dup-file[data-selected='true']:not([data-keeper='true']) {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+.dup-thumb {
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  display: block;
+  background: var(--color-border);
+}
+
+.dup-thumb--error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+  border-radius: var(--radius-sm);
+  color: var(--color-error);
+  font-size: 24px;
+}
+
+.dup-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dup-badge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.dup-badge--keeper {
+  background: var(--color-success);
+  color: white;
+}
+
+.dup-checkbox {
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+  width: 14px;
+  height: 14px;
+}
+
+.dup-filename {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.dup-size {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}

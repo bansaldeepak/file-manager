@@ -1,0 +1,124 @@
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md);
+  height: 100%;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.sidebar-heading {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.sidebar-empty {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.folder-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.folder-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-text) 5%, transparent);
+}
+
+.folder-name {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.folder-remove {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.folder-remove:hover {
+  color: var(--color-error);
+}
+
+.sidebar-btn {
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  text-align: center;
+}
+
+.sidebar-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.sidebar-btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.sidebar-btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sidebar-btn--secondary {
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  color: var(--color-text);
+}
+
+.sidebar-btn--secondary:hover {
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
+}
+
+.sidebar-progress,
+.sidebar-result {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.sidebar-error {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-error);
+  margin: 0;
+}

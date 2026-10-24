@@ -56,7 +56,11 @@ fn main() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(Mutex::new(conn))
-        .invoke_handler(tauri::generate_handler![commands::preview::preview_file])
+        .invoke_handler(tauri::generate_handler![
+            commands::preview::preview_file,
+            commands::scan::pick_folder,
+            commands::scan::scan_folders,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

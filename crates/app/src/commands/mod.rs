@@ -1,6 +1,7 @@
 // Tauri command handlers — wired in as they're implemented
 
 pub mod preview;
+pub mod scan;
 
 use std::path::PathBuf;
 

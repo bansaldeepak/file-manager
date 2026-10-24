@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 dedupe-core = { path = "../core" }
 dedupe-index = { path = "../index" }
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
 anyhow.workspace = true
