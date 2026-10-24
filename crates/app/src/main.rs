@@ -5,7 +5,28 @@ use std::sync::Mutex;
 
 mod commands;
 
+fn run_smoke_test(fixture_dir: &std::path::Path) -> i32 {
+    use dedupe_core::{grouper, scanner};
+    eprintln!("smoke-test: scanning {}", fixture_dir.display());
+    let files = match scanner::scan_directory(fixture_dir, Some(2), |_| {}) {
+        Ok(f) => f,
+        Err(e) => { eprintln!("smoke-test: scan error: {e}"); return 1; }
+    };
+    let groups = grouper::build_groups(&files);
+    let dup_count = groups.len();
+    eprintln!("smoke-test: found {dup_count} duplicate group(s)");
+    if dup_count > 0 { 0 } else { 1 }
+}
+
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(|s| s.as_str()) == Some("--smoke-test") {
+        let fixture_dir = args.get(2)
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| std::path::PathBuf::from("tests/fixtures/images"));
+        std::process::exit(run_smoke_test(&fixture_dir));
+    }
+
     let log_dir = dirs::data_local_dir()
         .unwrap_or_else(|| std::path::PathBuf::from("."))
         .join("Arcitae/logs");

@@ -16,4 +16,11 @@ echo "4. Python app still compiles"
 source .venv/bin/activate
 python3 -m py_compile app.py
 
+echo "5. Smoke test (packaged .app)"
+if [ -d "target/release/bundle/macos/Arcitae Dedupe.app" ]; then
+    bash scripts/smoke-test.sh "target/release/bundle/macos/Arcitae Dedupe.app"
+else
+    echo "SKIP: packaged .app not found (run 'pnpm tauri build' to build it)"
+fi
+
 echo "=== All checks passed ==="
