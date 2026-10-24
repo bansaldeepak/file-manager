@@ -19,6 +19,10 @@
   gap: var(--spacing-sm);
 }
 
+.toolbar-spacer {
+  flex: 1;
+}
+
 .toolbar-right {
   margin-left: auto;
   display: flex;

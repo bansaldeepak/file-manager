@@ -1,8 +1,11 @@
 import React from 'react';
 import { SearchBar } from './SearchBar';
+import { TabBar, type MediaTab } from './TabBar';
 import './AppShell.css';
 
 interface AppShellProps {
+  activeTab: MediaTab;
+  onTabChange: (tab: MediaTab) => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   searchRef?: React.RefObject<HTMLInputElement>;
@@ -12,6 +15,8 @@ interface AppShellProps {
 }
 
 export function AppShell({
+  activeTab,
+  onTabChange,
   searchQuery,
   onSearchChange,
   searchRef,
@@ -22,6 +27,8 @@ export function AppShell({
   return (
     <div className="app-shell">
       <div className="toolbar">
+        <TabBar value={activeTab} onChange={onTabChange} />
+        <div className="toolbar-spacer" />
         <div className="toolbar-right">
           <SearchBar value={searchQuery} onChange={onSearchChange} focusRef={searchRef} />
         </div>

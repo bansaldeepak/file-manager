@@ -2,13 +2,17 @@ import { useState, useRef } from 'react';
 import './styles/tokens.css';
 import './styles/reset.css';
 import { AppShell } from './components/AppShell';
+import type { MediaTab } from './components/TabBar';
 
 function App() {
+  const [activeTab, setActiveTab] = useState<MediaTab>('photos');
   const [searchQuery, setSearchQuery] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
 
   return (
     <AppShell
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
       searchQuery={searchQuery}
       onSearchChange={setSearchQuery}
       searchRef={searchRef}
