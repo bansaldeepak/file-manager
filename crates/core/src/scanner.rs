@@ -1,5 +1,5 @@
 use std::path::{Path, PathBuf};
-use anyhow::Result;
+use anyhow::{Context, Result};
 use rayon::prelude::*;
 use tracing::{debug, info, warn};
 use walkdir::WalkDir;
@@ -25,28 +25,52 @@ pub struct ScannedFile {
 
 pub fn scan_directory(
     root: &Path,
+    concurrency: Option<usize>,
     progress: impl Fn(usize) + Send + Sync,
 ) -> Result<Vec<ScannedFile>> {
-    let entries: Vec<PathBuf> = WalkDir::new(root)
+    let entries = collect_entries(root);
+    info!(
+        "Scanning {} files under {} (concurrency={:?})",
+        entries.len(),
+        root.display(),
+        concurrency
+    );
+
+    let results = if let Some(n) = concurrency {
+        let pool = rayon::ThreadPoolBuilder::new()
+            .num_threads(n)
+            .build()
+            .context("build thread pool")?;
+        pool.install(|| scan_entries_parallel(&entries, &progress))
+    } else {
+        scan_entries_parallel(&entries, &progress)
+    };
+
+    Ok(results)
+}
+
+fn collect_entries(root: &Path) -> Vec<PathBuf> {
+    WalkDir::new(root)
         .follow_links(false)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_type().is_file())
         .map(|e| e.path().to_path_buf())
-        .collect();
+        .collect()
+}
 
-    info!("Found {} files under {}", entries.len(), root.display());
-
-    let results = entries
+fn scan_entries_parallel(
+    entries: &[PathBuf],
+    progress: &(impl Fn(usize) + Send + Sync),
+) -> Vec<ScannedFile> {
+    entries
         .par_iter()
         .enumerate()
         .map(|(i, path)| {
             progress(i);
             scan_file(path)
         })
-        .collect();
-
-    Ok(results)
+        .collect()
 }
 
 fn scan_file(path: &Path) -> ScannedFile {
