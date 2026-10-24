@@ -5,6 +5,7 @@ interface ScanState {
   progress?: string;
   scanned?: number;
   total?: number;
+  lastScanAt?: string | null;
 }
 
 interface SidebarProps {
@@ -80,6 +81,11 @@ export function Sidebar({
             {resultCount === 0
               ? 'No duplicates found.'
               : `${resultCount} duplicate group${resultCount !== 1 ? 's' : ''} found.`}
+          </p>
+        )}
+        {scanState.status === 'done' && scanState.lastScanAt && (
+          <p className="sidebar-result" style={{ opacity: 0.6, fontSize: '11px' }}>
+            Last scan: {scanState.lastScanAt}
           </p>
         )}
         {scanState.status === 'error' && scanState.progress && (

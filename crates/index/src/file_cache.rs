@@ -41,6 +41,47 @@ pub struct CachedFile {
     pub error: Option<String>,
 }
 
+pub fn load_all(conn: &Connection) -> Result<Vec<CachedFile>, IndexError> {
+    let mut stmt = conn
+        .prepare(
+            "SELECT id, path, size, mtime_ns, sha256, pixel_hash, error
+             FROM file_cache ORDER BY path",
+        )
+        .map_err(promote)?;
+    let rows = stmt
+        .query_map([], |row| {
+            Ok(CachedFile {
+                id: row.get(0)?,
+                path: row.get(1)?,
+                size: row.get(2)?,
+                mtime_ns: row.get(3)?,
+                sha256: row.get(4)?,
+                pixel_hash: row.get(5)?,
+                error: row.get(6)?,
+            })
+        })
+        .map_err(promote)?;
+    rows.collect::<Result<Vec<_>, _>>().map_err(promote)
+}
+
+pub fn get_scanned_at(conn: &Connection) -> Option<String> {
+    conn.query_row(
+        "SELECT value FROM scan_metadata WHERE key = 'last_scan_at'",
+        [],
+        |r| r.get(0),
+    )
+    .ok()
+}
+
+pub fn set_scanned_at(conn: &Connection) -> Result<(), IndexError> {
+    conn.execute(
+        "INSERT OR REPLACE INTO scan_metadata (key, value) VALUES ('last_scan_at', datetime('now'))",
+        [],
+    )
+    .map_err(promote)?;
+    Ok(())
+}
+
 pub fn get_by_path(conn: &Connection, path: &str) -> Result<Option<CachedFile>, IndexError> {
     conn.query_row(
         "SELECT id, path, size, mtime_ns, sha256, pixel_hash, error

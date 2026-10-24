@@ -2,6 +2,7 @@ use std::path::PathBuf;
 use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 use dedupe_core::{grouper, scanner};
+use crate::commands::cache;
 
 const CHUNK_SIZE: usize = 300;
 
@@ -56,6 +57,7 @@ pub async fn pick_folder(app: AppHandle) -> Result<Option<String>, String> {
 #[tauri::command]
 pub async fn scan_folders(
     paths: Vec<String>,
+    app: AppHandle,
     window: tauri::Window,
 ) -> Result<ScanResult, String> {
     // Phase 1: collect all entries (fast — just filesystem walk, no hashing)
@@ -99,6 +101,12 @@ pub async fn scan_folders(
 
     let total_files = all_files.len();
     let skipped = all_files.iter().filter(|f| f.error.is_some()).count();
+
+    // Persist to native cache so next launch shows these results immediately
+    if let Err(e) = cache::save_to_cache(&app, &all_files) {
+        tracing::warn!("cache write failed: {e}");
+    }
+
     Ok(ScanResult { total_files, skipped })
 }
 

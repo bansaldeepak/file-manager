@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import './styles/tokens.css';
@@ -52,6 +52,48 @@ function App() {
   const [groups, setGroups] = useState<GroupInfo[]>([]);
   const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
   const [lastQuarantine, setLastQuarantine] = useState<QuarantineResult | null>(null);
+  const [lastScanAt, setLastScanAt] = useState<string | null>(null);
+
+  // Load cached results from previous scan on mount
+  useEffect(() => {
+    const load = async () => {
+      // Try loading native cache first
+      const result = await invoke<{
+        groups: GroupInfo[];
+        total_files: number;
+        skipped: number;
+        scanned_at: string | null;
+      } | null>('load_cached').catch(() => null);
+
+      if (result && result.groups.length > 0) {
+        setGroups(result.groups);
+        setLastScanAt(result.scanned_at);
+        setScanStatus('done');
+        const skippedNote = result.skipped > 0 ? ` · ${result.skipped} skipped` : '';
+        setScanProgress(`${result.total_files.toLocaleString()} files (cached)${skippedNote}`);
+        return;
+      }
+
+      // No native cache — try importing the Python DB if it exists alongside the project
+      const pythonDbPath = './dedupe_cache.sqlite3';
+      const imported = await invoke<number>('import_python_cache', { pythonDbPath }).catch(() => 0);
+      if (imported > 0) {
+        const fresh = await invoke<{
+          groups: GroupInfo[];
+          total_files: number;
+          skipped: number;
+          scanned_at: string | null;
+        } | null>('load_cached').catch(() => null);
+        if (fresh && fresh.groups.length > 0) {
+          setGroups(fresh.groups);
+          setLastScanAt(fresh.scanned_at);
+          setScanStatus('done');
+          setScanProgress(`${fresh.total_files.toLocaleString()} files (imported from previous scan)`);
+        }
+      }
+    };
+    load();
+  }, []);
 
   const handleUndo = () => {
     console.log('undo quarantine — restore command wired in Stage 4');
@@ -232,7 +274,7 @@ function App() {
       sidebar={
         <Sidebar
           folders={folders}
-          scanState={{ status: scanStatus, progress: scanProgress, scanned: scanScanned, total: scanTotal }}
+          scanState={{ status: scanStatus, progress: scanProgress, scanned: scanScanned, total: scanTotal, lastScanAt }}
           onAddFolder={handleAddFolder}
           onRemoveFolder={handleRemoveFolder}
           onScan={handleScan}

@@ -1,5 +1,6 @@
 // Tauri command handlers — wired in as they're implemented
 
+pub mod cache;
 pub mod preview;
 pub mod scan;
 
