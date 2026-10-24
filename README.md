@@ -134,3 +134,4 @@ They never operate on your photo library.
 - Decoded pixel hashes identify pixel-identical images after EXIF orientation.
 - Perceptual hashes identify likely resized/recompressed copies, but can produce false positives.
 - Keep a backup of important files. Permanent deletion is irreversible.
+# file-manager
