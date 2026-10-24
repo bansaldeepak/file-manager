@@ -1,0 +1,11 @@
+[package]
+name = "dedupe-index"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dedupe-core = { path = "../core" }
+rusqlite = { version = "0.31", features = ["bundled"] }
+anyhow.workspace = true
+thiserror.workspace = true
+serde.workspace = true
