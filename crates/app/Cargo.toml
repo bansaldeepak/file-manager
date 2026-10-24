@@ -15,3 +15,6 @@ tracing.workspace = true
 tracing-subscriber.workspace = true
 dirs = "5"
 rfd = { version = "0.14", features = ["async-std"] }
+
+[dev-dependencies]
+tempfile = "3"

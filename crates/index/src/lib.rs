@@ -2,6 +2,7 @@ pub mod db;
 pub mod error;
 pub mod file_cache;
 pub mod migrations;
+pub mod op_journal;
 
 pub use error::IndexError;
 pub use rusqlite;

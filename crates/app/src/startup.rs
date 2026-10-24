@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 use dedupe_index::{db, Connection, IndexError};
+use tracing::warn;
 
 #[derive(Debug, PartialEq)]
 enum MigrationChoice {
@@ -34,6 +35,18 @@ pub fn init_database(db_path: &PathBuf) -> Result<Connection, String> {
             }
         }
         Err(e) => Err(format!("Failed to open database: {e}")),
+    }
+}
+
+/// Run startup reconciliation of PENDING journal entries.
+/// Returns alert strings for entries requiring manual review.
+pub fn reconcile_on_startup(conn: &Connection) -> Vec<String> {
+    match crate::reconcile::reconcile_pending(conn) {
+        Ok(alerts) => alerts,
+        Err(e) => {
+            warn!("reconcile failed: {e}");
+            vec![]
+        }
     }
 }
 
