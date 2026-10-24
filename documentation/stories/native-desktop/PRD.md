@@ -110,7 +110,7 @@ Milestones are acceptance gates, not calendar estimates. Detailed engineering ta
 
 ## Dependencies and Risks
 
-The machine has Apple Silicon, Rust 1.89.0 active (1.95 also installed), Node 25.9.0, pnpm, and Apple Command Line Tools. Select and pin supported project toolchains after a minimal Tauri build; no global toolchain changes are part of this proposal. Crates, frontend dependencies, decoder support, and packaging have not yet been verified.
+The machine has Apple Silicon, Rust 1.89.0 active (1.95 also installed), Node 24.22.1, pnpm, and Apple Command Line Tools. Select and pin supported project toolchains after a minimal Tauri build; no global toolchain changes are part of this proposal. Crates, frontend dependencies, decoder support, and packaging have not yet been verified.
 
 | Risk | Likelihood / impact | Mitigation |
 | --- | --- | --- |

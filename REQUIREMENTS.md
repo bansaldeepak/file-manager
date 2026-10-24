@@ -44,6 +44,11 @@ The existing Python application is the behavior reference for photo duplicate de
 - Exact file duplicate detection.
 - Pixel-identical image detection after documented normalization.
 - Perceptual image similarity detection.
+
+> **[DEFERRED — CEO Review D3, 2026-10-23]** pHash perceptual matching is deferred to post-MVP.
+> The native app ships exact-dedup (SHA-256) + pixel-identical (EXIF-RGBA hash) first.
+> Upgrade trigger: after exact+cleanup MVP ships and is validated in daily use.
+
 - Duplicate groups with preview, metadata, and keeper suggestions.
 - User-controlled selection of files to quarantine.
 - Quarantine review, restore, and explicit permanent deletion.
@@ -158,7 +163,7 @@ Use current stable versions compatible with the selected toolchain, pin dependen
 - File hashing: `sha2` or `blake3`.
 - Image decoding: `image`.
 - EXIF metadata: `kamadak-exif`, with explicit orientation normalization.
-- Perceptual hashing: evaluate `imghash` or another compatible implementation against Python ImageHash. Do not assume equivalence without tests.
+- Perceptual hashing: ~~evaluate `imghash` or another compatible implementation against Python ImageHash~~ **[DEFERRED — CEO Review D3, 2026-10-23]** Deferred to post-MVP. Upgrade trigger: after exact+cleanup MVP ships.
 - SQLite: `rusqlite`, with a deliberate bundled-versus-system SQLite decision.
 - Error handling: `thiserror`.
 - Logging: `tracing` and a local log strategy that does not expose sensitive paths by default.
@@ -221,6 +226,10 @@ Test:
 Do not claim images are pixel-identical if dimensions or normalized pixel content differ.
 
 ### 6.3 Perceptually similar images
+
+> **[DEFERRED — CEO Review D3, 2026-10-23]** This entire section is deferred to post-MVP.
+> The native app ships exact-dedup (SHA-256) + pixel-identical (EXIF-RGBA hash) first.
+> Upgrade trigger: after exact+cleanup MVP ships and is validated in daily use.
 
 - Implement perceptual hashing with documented preprocessing and hash size.
 - Use Hamming distance for hash comparison.
@@ -522,7 +531,7 @@ The MVP is not complete until all of the following are true:
 - [ ] App launches as a macOS desktop application.
 - [ ] Published build does not require Python, Node.js, or Rust to be installed.
 - [ ] Users can select a folder and scan supported image formats.
-- [ ] Exact, pixel-identical, and perceptually similar matches are distinguishable.
+- [ ] Exact and pixel-identical matches are distinguishable. ~~Perceptually similar~~ **[DEFERRED — CEO Review D3, 2026-10-23]** pHash deferred to post-MVP.
 - [ ] Similarity threshold and keeper suggestion follow documented rules.
 - [ ] Rust parity tests pass against the agreed Python reference fixtures.
 - [ ] Progress, cancellation, unreadable files, and errors are handled.
@@ -564,7 +573,7 @@ Work incrementally. Do not attempt a large untested rewrite in one pass.
 - The Rust workspace skeleton.
 - A minimal golden fixture set using redistributable or generated assets.
 - A Python reference-output generator.
-- Rust unit tests for exact hashing, image normalization, pHash distance, and keeper selection.
+- Rust unit tests for exact hashing, image normalization, and keeper selection. ~~pHash distance~~ **[DEFERRED — CEO Review D3, 2026-10-23]** pHash tests deferred to post-MVP.
 - A parity test command documented in `docs/testing.md`.
 
 Do not build the complete desktop UI or implement video similarity in the first task. Establish a trustworthy, reproducible parity baseline first.

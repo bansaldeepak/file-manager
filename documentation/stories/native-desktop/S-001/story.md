@@ -57,7 +57,12 @@ As a photographer managing a large personal library, I want a native app that sc
 **Automated coverage:** Rust parity tests (T-007), journal state machine tests (T-021), OOM skip test (T-008), SQLITE_FULL test (T-009), migration failure test (T-010).
 
 ## Execution Policy
-Selection is made by the user at implementation start; never pre-approve a mode during planning.
+Execution mode: selective
+Selected by: User explicit selection, 2026-10-24
+Recommendation: selective — story has both routine scaffolding (T-001, T-002, T-003, T-026) and safety-critical Rust code (T-006, T-007–T-010, T-021, T-023) plus browser checkpoints (T-014 layout, T-023 confirm).
+Retro timing: before publication
+Critical/manual checkpoints: T-014 (three-pane layout renders correctly in browser), T-023 (quarantine confirm single-fires), T-006 (cross-volume quarantine design review before commit)
+Open questions/approvals: none
 
 ## References
 - documentation/stories/native-desktop/PRD.md
