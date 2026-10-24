@@ -9,3 +9,7 @@ rusqlite = { version = "0.31", features = ["bundled"] }
 anyhow.workspace = true
 thiserror.workspace = true
 serde.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile = "3"
