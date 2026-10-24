@@ -66,3 +66,18 @@ fn pixel_hash_differs_for_different_resolution() {
     let h200 = hex::encode(pixel_hash::compute(&path_200).unwrap());
     assert_ne!(h100, h200, "different-resolution images must have different pixel_hash");
 }
+
+#[test]
+fn huge_image_is_skipped_not_crashed() {
+    let huge = fixtures_dir().join("huge_100000x100000.png");
+    if !huge.exists() {
+        return; // fixture not yet generated — skip silently
+    }
+    let result = pixel_hash::compute(&huge);
+    assert!(result.is_err(), "huge image should return Err, not OOM crash");
+    let msg = result.unwrap_err().to_string();
+    assert!(
+        msg.contains("exceed max") || msg.contains("dimensions"),
+        "error should mention dimensions: {msg}"
+    );
+}

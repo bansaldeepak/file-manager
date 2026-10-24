@@ -24,6 +24,24 @@ img_big.save(FIXTURE_DIR / "red_200x200.jpg", "JPEG", quality=95)
 # Pure PNG (lossless, ensures exact pixel round-trip)
 img.save(FIXTURE_DIR / "red_100x100.png", "PNG")
 
+import struct, zlib
+
+def write_fake_huge_png(path, claimed_w, claimed_h):
+    """Write a PNG with claimed huge dimensions but minimal data (T-008 OOM guard test)."""
+    sig = b"\x89PNG\r\n\x1a\n"
+    ihdr_data = struct.pack(">IIBBBBB", claimed_w, claimed_h, 8, 2, 0, 0, 0)
+    ihdr_crc = zlib.crc32(b"IHDR" + ihdr_data) & 0xFFFFFFFF
+    ihdr = struct.pack(">I", 13) + b"IHDR" + ihdr_data + struct.pack(">I", ihdr_crc)
+    idat_data = zlib.compress(b"")
+    idat_crc = zlib.crc32(b"IDAT" + idat_data) & 0xFFFFFFFF
+    idat = struct.pack(">I", len(idat_data)) + b"IDAT" + idat_data + struct.pack(">I", idat_crc)
+    iend_crc = zlib.crc32(b"IEND") & 0xFFFFFFFF
+    iend = struct.pack(">I", 0) + b"IEND" + struct.pack(">I", iend_crc)
+    with open(path, "wb") as f:
+        f.write(sig + ihdr + idat + iend)
+
+write_fake_huge_png(FIXTURE_DIR / "huge_100000x100000.png", 100000, 100000)
+
 print("Fixtures written to", FIXTURE_DIR)
 for p in sorted(FIXTURE_DIR.iterdir()):
     print(f"  {p.name}: {p.stat().st_size} bytes")
