@@ -5,6 +5,7 @@ import { AppShell } from './components/AppShell';
 import { EmptyState } from './components/EmptyState';
 import type { MediaTab } from './components/TabBar';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { ZoomSlider } from './components/ZoomSlider';
 
 interface Folders {
   original?: string;
@@ -15,6 +16,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<MediaTab>('photos');
   const [searchQuery, setSearchQuery] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
+  const [thumbnailSize, setThumbnailSize] = useState(160);
   const [folders, setFolders] = useState<Folders>({});
 
   useKeyboardShortcuts({
@@ -76,6 +78,7 @@ function App() {
           Inspector — coming in Stage 3
         </p>
       }
+      footer={<ZoomSlider value={thumbnailSize} onChange={setThumbnailSize} />}
     />
   );
 }

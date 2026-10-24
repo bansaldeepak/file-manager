@@ -12,6 +12,7 @@ interface AppShellProps {
   sidebar: React.ReactNode;
   contactSheet: React.ReactNode;
   inspector: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 export function AppShell({
@@ -23,6 +24,7 @@ export function AppShell({
   sidebar,
   contactSheet,
   inspector,
+  footer,
 }: AppShellProps) {
   return (
     <div className="app-shell">
@@ -38,6 +40,7 @@ export function AppShell({
         <main className="contact-sheet">{contactSheet}</main>
         <aside className="inspector">{inspector}</aside>
       </div>
+      {footer && <div className="app-footer">{footer}</div>}
     </div>
   );
 }
