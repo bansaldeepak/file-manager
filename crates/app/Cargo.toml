@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 dedupe-core = { path = "../core" }
+rayon = "1"
 dedupe-index = { path = "../index" }
 tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-fs = "2"
