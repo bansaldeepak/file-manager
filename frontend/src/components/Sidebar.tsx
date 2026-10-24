@@ -3,6 +3,8 @@ import './Sidebar.css';
 interface ScanState {
   status: 'idle' | 'scanning' | 'done' | 'error';
   progress?: string;
+  scanned?: number;
+  total?: number;
 }
 
 interface SidebarProps {
@@ -63,6 +65,13 @@ export function Sidebar({
         >
           {scanState.status === 'scanning' ? 'Scanning…' : 'Scan'}
         </button>
+        {scanState.status === 'scanning' && scanState.total && scanState.total > 0 && (
+          <progress
+            value={scanState.scanned ?? 0}
+            max={scanState.total}
+            style={{ width: '100%', accentColor: 'var(--color-primary)' }}
+          />
+        )}
         {scanState.progress && (
           <p className="sidebar-progress">{scanState.progress}</p>
         )}

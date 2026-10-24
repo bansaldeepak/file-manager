@@ -3,6 +3,8 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 use dedupe_core::{grouper, scanner};
 
+const CHUNK_SIZE: usize = 300;
+
 #[derive(Serialize, Clone)]
 pub struct ScanProgress {
     pub scanned: usize,
@@ -26,8 +28,14 @@ pub struct GroupInfo {
 }
 
 #[derive(Serialize, Clone)]
-pub struct ScanResult {
+pub struct ScanGroups {
     pub groups: Vec<GroupInfo>,
+    pub scanned: usize,
+    pub total: usize,
+}
+
+#[derive(Serialize, Clone)]
+pub struct ScanResult {
     pub total_files: usize,
     pub skipped: usize,
 }
@@ -50,64 +58,71 @@ pub async fn scan_folders(
     paths: Vec<String>,
     window: tauri::Window,
 ) -> Result<ScanResult, String> {
-    let mut all_files: Vec<scanner::ScannedFile> = Vec::new();
-
+    // Phase 1: collect all entries (fast — just filesystem walk, no hashing)
+    let mut all_entries: Vec<PathBuf> = Vec::new();
     for path_str in &paths {
         let root = PathBuf::from(path_str);
-        let label = root
-            .file_name()
-            .map(|n| n.to_string_lossy().to_string())
-            .unwrap_or_else(|| path_str.clone());
-        let _ = window.emit(
-            "scan-progress",
-            ScanProgress { scanned: 0, total: 0, path: label.clone() },
-        );
+        let entries = scanner::list_entries(&root);
+        all_entries.extend(entries);
+    }
+    let total = all_entries.len();
 
-        let w = window.clone();
-        let l = label.clone();
-        let files =
-            scanner::scan_directory(&root, Some(2), move |n| {
-                let _ = w.emit(
-                    "scan-progress",
-                    ScanProgress { scanned: n, total: 0, path: l.clone() },
-                );
-            })
-            .map_err(|e| format!("scan failed for {path_str}: {e}"))?;
+    // Emit total so frontend can show X/Y progress
+    let _ = window.emit("scan-progress", ScanProgress {
+        scanned: 0,
+        total,
+        path: String::new(),
+    });
 
-        all_files.extend(files);
+    // Phase 2: hash in chunks, building groups progressively
+    let mut all_files: Vec<scanner::ScannedFile> = Vec::new();
+
+    for chunk in all_entries.chunks(CHUNK_SIZE) {
+        let new_files = tokio::task::spawn_blocking({
+            let chunk: Vec<PathBuf> = chunk.to_vec();
+            move || scanner::scan_chunk(&chunk)
+        })
+        .await
+        .map_err(|e| e.to_string())?;
+
+        all_files.extend(new_files);
+
+        let scanned = all_files.len();
+        let groups = build_group_infos(&all_files);
+
+        let _ = window.emit("scan-groups", ScanGroups {
+            groups,
+            scanned,
+            total,
+        });
     }
 
     let total_files = all_files.len();
     let skipped = all_files.iter().filter(|f| f.error.is_some()).count();
+    Ok(ScanResult { total_files, skipped })
+}
 
-    let groups = grouper::build_groups(&all_files);
-
-    let group_infos = groups
+fn build_group_infos(files: &[scanner::ScannedFile]) -> Vec<GroupInfo> {
+    grouper::build_groups(files)
         .into_iter()
         .map(|g| {
-            let files = g
-                .files
-                .iter()
-                .map(|&idx| {
-                    let f = &all_files[idx];
-                    FileInfo {
-                        path: f.path.to_string_lossy().to_string(),
-                        size: f.size,
-                        is_keeper: idx == g.keeper,
-                        error: f.error.clone(),
-                    }
-                })
-                .collect();
+            let file_infos = g.files.iter().map(|&idx| {
+                let f = &files[idx];
+                FileInfo {
+                    path: f.path.to_string_lossy().to_string(),
+                    size: f.size,
+                    is_keeper: idx == g.keeper,
+                    error: f.error.clone(),
+                }
+            }).collect();
             GroupInfo {
                 group_id: g.group_id,
                 match_type: match g.match_type {
                     grouper::MatchType::Exact => "exact".to_string(),
                     grouper::MatchType::PixelIdentical => "pixel".to_string(),
                 },
-                files,
+                files: file_infos,
             }
         })
-        .collect();
-
-    Ok(ScanResult { groups: group_infos, total_files, skipped })
+        .collect()
 }

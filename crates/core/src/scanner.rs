@@ -28,7 +28,7 @@ pub fn scan_directory(
     concurrency: Option<usize>,
     progress: impl Fn(usize) + Send + Sync,
 ) -> Result<Vec<ScannedFile>> {
-    let entries = collect_entries(root);
+    let entries = list_entries(root);
     info!(
         "Scanning {} files under {} (concurrency={:?})",
         entries.len(),
@@ -49,7 +49,17 @@ pub fn scan_directory(
     Ok(results)
 }
 
-fn collect_entries(root: &Path) -> Vec<PathBuf> {
+/// Walk `root` and return all file paths (no hashing). Fast — metadata only.
+pub fn list_entries(root: &Path) -> Vec<PathBuf> {
+    list_entries_inner(root)
+}
+
+/// Hash a slice of paths and return ScannedFile results. Runs in the calling thread pool.
+pub fn scan_chunk(paths: &[PathBuf]) -> Vec<ScannedFile> {
+    paths.par_iter().map(|p| scan_file(p)).collect()
+}
+
+fn list_entries_inner(root: &Path) -> Vec<PathBuf> {
     WalkDir::new(root)
         .follow_links(false)
         .into_iter()

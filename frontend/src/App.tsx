@@ -25,6 +25,12 @@ interface ScanProgressEvent {
 
 type ScanStatus = 'idle' | 'scanning' | 'done' | 'error';
 
+interface ScanGroupsEvent {
+  groups: GroupInfo[];
+  scanned: number;
+  total: number;
+}
+
 function formatBytes(bytes: number): string {
   if (bytes >= 1_000_000_000) return `${(bytes / 1_000_000_000).toFixed(1)} GB`;
   if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`;
@@ -41,6 +47,8 @@ function App() {
   const [folders, setFolders] = useState<string[]>([]);
   const [scanStatus, setScanStatus] = useState<ScanStatus>('idle');
   const [scanProgress, setScanProgress] = useState<string>('');
+  const [scanScanned, setScanScanned] = useState(0);
+  const [scanTotal, setScanTotal] = useState(0);
   const [groups, setGroups] = useState<GroupInfo[]>([]);
   const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
   const [lastQuarantine, setLastQuarantine] = useState<QuarantineResult | null>(null);
@@ -87,33 +95,43 @@ function App() {
   const handleScan = async () => {
     if (folders.length === 0 || scanStatus === 'scanning') return;
     setScanStatus('scanning');
-    setScanProgress('Starting…');
+    setScanProgress('Walking folders…');
+    setScanScanned(0);
+    setScanTotal(0);
     setGroups([]);
     setSelectedPaths(new Set());
 
-    const unlisten = await listen<ScanProgressEvent>('scan-progress', ev => {
-      const { scanned, path } = ev.payload;
-      if (scanned > 0) {
-        setScanProgress(`${path}: ${scanned} files scanned…`);
-      } else {
-        setScanProgress(`Scanning ${path}…`);
+    const unlistenProgress = await listen<ScanProgressEvent>('scan-progress', ev => {
+      const { total } = ev.payload;
+      if (total > 0) {
+        setScanTotal(total);
+        setScanProgress(`Found ${total.toLocaleString()} files, hashing…`);
       }
     });
 
+    const unlistenGroups = await listen<ScanGroupsEvent>('scan-groups', ev => {
+      const { groups, scanned, total } = ev.payload;
+      setGroups(groups);
+      setScanScanned(scanned);
+      setScanTotal(total);
+      const pct = total > 0 ? Math.round((scanned / total) * 100) : 0;
+      setScanProgress(`${scanned.toLocaleString()} / ${total.toLocaleString()} (${pct}%)`);
+    });
+
     try {
-      const result = await invoke<{ groups: GroupInfo[]; total_files: number; skipped: number }>(
+      const result = await invoke<{ total_files: number; skipped: number }>(
         'scan_folders',
         { paths: folders }
       );
-      setGroups(result.groups);
-      const skippedNote = result.skipped > 0 ? ` (${result.skipped} skipped)` : '';
-      setScanProgress(`${result.total_files} files scanned${skippedNote}`);
+      const skippedNote = result.skipped > 0 ? ` · ${result.skipped} skipped` : '';
+      setScanProgress(`${result.total_files.toLocaleString()} files scanned${skippedNote}`);
       setScanStatus('done');
     } catch (e) {
       setScanProgress(String(e));
       setScanStatus('error');
     } finally {
-      unlisten();
+      unlistenProgress();
+      unlistenGroups();
     }
   };
 
@@ -153,7 +171,7 @@ function App() {
         />
       );
     }
-    if (scanStatus === 'scanning') {
+    if (scanStatus === 'scanning' && groups.length === 0) {
       return (
         <EmptyState
           title="Scanning…"
@@ -214,7 +232,7 @@ function App() {
       sidebar={
         <Sidebar
           folders={folders}
-          scanState={{ status: scanStatus, progress: scanProgress }}
+          scanState={{ status: scanStatus, progress: scanProgress, scanned: scanScanned, total: scanTotal }}
           onAddFolder={handleAddFolder}
           onRemoveFolder={handleRemoveFolder}
           onScan={handleScan}
