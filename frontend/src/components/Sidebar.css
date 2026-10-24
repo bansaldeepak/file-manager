@@ -6,6 +6,84 @@
   height: 100%;
 }
 
+/* ── view nav ───────────────────────────────────────────── */
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: calc(-1 * var(--spacing-sm));
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: background 80ms, color 80ms;
+}
+
+.sidebar-nav-item:hover {
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  color: var(--color-text);
+}
+
+.sidebar-nav-item--active {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+}
+
+.sidebar-nav-item--active:hover {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+}
+
+.sidebar-nav-icon {
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-nav-badge {
+  margin-left: auto;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 999px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.sidebar-nav-badge--muted {
+  background: color-mix(in srgb, var(--color-text) 18%, transparent);
+  color: var(--color-text-muted);
+}
+
+.sidebar-nav-item--disabled,
+.sidebar-nav-item:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sidebar-nav-item--disabled:hover,
+.sidebar-nav-item:disabled:hover {
+  background: none;
+  color: var(--color-text-muted);
+}
+
 .sidebar-section {
   display: flex;
   flex-direction: column;
@@ -58,6 +136,71 @@
   min-width: 0;
 }
 
+.folder-roles-legend {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: 2px;
+}
+
+.folder-roles-legend-item {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.folder-roles-legend-item--orig {
+  color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+}
+
+.folder-roles-legend-item--check {
+  color: #e07b00;
+  background: color-mix(in srgb, #e07b00 12%, transparent);
+}
+
+.folder-role-group {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.folder-role-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 0;
+  transition: background 80ms, color 80ms, border-color 80ms;
+}
+
+.folder-role-btn--orig-active {
+  border-color: var(--color-success);
+  color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 18%, transparent);
+}
+
+.folder-role-btn--check-active {
+  border-color: #e07b00;
+  color: #e07b00;
+  background: color-mix(in srgb, #e07b00 18%, transparent);
+}
+
+.folder-role-btn:hover:not(.folder-role-btn--orig-active):not(.folder-role-btn--check-active) {
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
+  color: var(--color-text);
+}
+
 .folder-remove {
   background: none;
   border: none;
@@ -71,6 +214,14 @@
 
 .folder-remove:hover {
   color: var(--color-error);
+}
+
+.sidebar-role-hint {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin: 0;
+  font-style: italic;
 }
 
 .sidebar-btn {

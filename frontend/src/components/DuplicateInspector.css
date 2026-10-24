@@ -1,0 +1,305 @@
+.di-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ── empty state ─────────────────────────────────────────── */
+
+.di-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--spacing-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: var(--spacing-lg);
+  text-align: center;
+}
+
+.di-empty-icon {
+  font-size: 32px;
+  opacity: 0.4;
+}
+
+/* ── preview image ───────────────────────────────────────── */
+
+.di-preview-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: color-mix(in srgb, var(--color-text) 4%, transparent);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.di-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ── badge + quick look ──────────────────────────────────── */
+
+.di-badge-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 8px var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.di-badge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.di-badge--keeper {
+  background: color-mix(in srgb, var(--color-success) 14%, transparent);
+  color: var(--color-success);
+}
+
+.di-badge--copy {
+  background: color-mix(in srgb, #e07b00 14%, transparent);
+  color: #e07b00;
+}
+
+.di-ql-btn {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background 80ms, color 80ms;
+}
+
+.di-ql-btn:hover {
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  color: var(--color-text);
+}
+
+/* ── metadata dl ─────────────────────────────────────────── */
+
+.di-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.di-meta dt {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  align-self: start;
+  padding-top: 1px;
+}
+
+.di-meta dd {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── path breadcrumbs in metadata ───────────────────────── */
+
+.di-path-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  min-width: 0;
+  font-size: 11px;
+}
+
+.di-path-sep {
+  color: var(--color-text-muted);
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+.di-path-seg {
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.di-path-leaf {
+  color: var(--color-text);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── copies section ──────────────────────────────────────── */
+
+.di-copies-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.di-copies-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px var(--spacing-md) 4px;
+  flex-shrink: 0;
+}
+
+.di-copies-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.di-copies-selected {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.di-copies-carousel {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-sm);
+  padding: 6px var(--spacing-md) var(--spacing-md);
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.di-copies-carousel::-webkit-scrollbar {
+  height: 4px;
+}
+
+.di-copies-carousel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.di-copies-carousel::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+/* ── copy card ───────────────────────────────────────────── */
+
+.di-copy-card {
+  flex-shrink: 0;
+  width: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  padding: 2px;
+  transition: border-color 100ms;
+}
+
+.di-copy-card:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+.di-copy-card--focused {
+  border-color: var(--color-primary);
+}
+
+.di-copy-thumb-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-text) 5%, transparent);
+  flex-shrink: 0;
+}
+
+.di-copy-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.di-copy-check {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 80ms, border-color 80ms;
+  backdrop-filter: blur(2px);
+}
+
+.di-copy-check--on {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.di-copy-check:hover:not(.di-copy-check--on) {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.di-copy-label {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  padding: 0 2px;
+}

@@ -55,6 +55,48 @@ pub fn mark_rolled_back(conn: &Connection, id: i64) -> Result<(), IndexError> {
     Ok(())
 }
 
+pub fn mark_deleted(conn: &Connection, id: i64) -> Result<(), IndexError> {
+    conn.execute(
+        r#"UPDATE op_journal SET status='DELETED', completed_at=datetime('now') WHERE id=?1"#,
+        [id],
+    )
+    .map_err(promote)?;
+    Ok(())
+}
+
+pub struct CompletedEntry {
+    pub id: i64,
+    pub source_path: String,
+    pub dest_path: String,
+    pub bytes_moved: u64,
+    pub completed_at: String,
+}
+
+pub fn list_quarantined(conn: &Connection) -> Result<Vec<CompletedEntry>, IndexError> {
+    let mut stmt = conn
+        .prepare(
+            r#"SELECT id, source_path, dest_path, completed_at
+               FROM op_journal
+               WHERE operation='quarantine' AND status='COMPLETED'
+               ORDER BY completed_at DESC"#,
+        )
+        .map_err(promote)?;
+
+    let rows = stmt
+        .query_map([], |row| {
+            Ok(CompletedEntry {
+                id: row.get(0)?,
+                source_path: row.get(1)?,
+                dest_path: row.get(2)?,
+                bytes_moved: 0,
+                completed_at: row.get::<_, Option<String>>(3)?.unwrap_or_default(),
+            })
+        })
+        .map_err(promote)?;
+
+    rows.collect::<Result<Vec<_>, _>>().map_err(IndexError::Sqlite)
+}
+
 pub fn get_pending(conn: &Connection) -> Result<Vec<JournalEntry>, IndexError> {
     let mut stmt = conn
         .prepare(

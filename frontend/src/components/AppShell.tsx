@@ -12,6 +12,7 @@ interface AppShellProps {
   sidebar: React.ReactNode;
   contactSheet: React.ReactNode;
   inspector: React.ReactNode;
+  inspectorOpen?: boolean;
   footer?: React.ReactNode;
 }
 
@@ -24,6 +25,7 @@ export function AppShell({
   sidebar,
   contactSheet,
   inspector,
+  inspectorOpen = false,
   footer,
 }: AppShellProps) {
   return (
@@ -38,7 +40,9 @@ export function AppShell({
       <div className="panes">
         <nav className="sidebar">{sidebar}</nav>
         <main className="contact-sheet">{contactSheet}</main>
-        <aside className="inspector">{inspector}</aside>
+        <aside className={`inspector${inspectorOpen ? ' inspector--open' : ''}`}>
+          {inspector}
+        </aside>
       </div>
       {footer && <div className="app-footer">{footer}</div>}
     </div>

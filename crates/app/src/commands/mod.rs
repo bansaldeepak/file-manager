@@ -2,7 +2,9 @@
 
 pub mod cache;
 pub mod preview;
+pub mod quarantine;
 pub mod scan;
+pub mod thumbnail;
 
 use std::path::PathBuf;
 

@@ -17,6 +17,8 @@ tokio.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 dirs = "5"
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp", "tiff"] }
+base64 = "0.21"
 rfd = { version = "0.14", features = ["async-std"] }
 tracing-appender = "0.2.5"
 

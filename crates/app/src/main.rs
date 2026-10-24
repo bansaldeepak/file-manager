@@ -5,6 +5,7 @@ use std::sync::Mutex;
 
 mod commands;
 mod quicklook_spike;
+mod thumbnail_cache;
 
 fn run_smoke_test(fixture_dir: &std::path::Path) -> i32 {
     use dedupe_core::{grouper, scanner};
@@ -56,6 +57,7 @@ fn main() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(Mutex::new(conn))
+        .manage(commands::thumbnail::ThumbnailThrottle::new())
         .invoke_handler(tauri::generate_handler![
             commands::preview::preview_file,
             commands::scan::pick_folder,
@@ -64,6 +66,12 @@ fn main() {
             commands::cache::import_python_cache,
             commands::cache::save_folders,
             commands::cache::load_folders,
+            commands::quarantine::quarantine_files,
+            commands::quarantine::restore_files,
+            commands::quarantine::list_quarantine,
+            commands::quarantine::delete_permanently,
+            commands::thumbnail::get_thumbnail,
+            commands::thumbnail::prefetch_thumbnails,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

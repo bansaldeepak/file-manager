@@ -5,6 +5,12 @@ use tauri::{AppHandle, Manager};
 use dedupe_core::{grouper, scanner::ScannedFile};
 use dedupe_index::{db, file_cache};
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct FolderEntry {
+    pub path: String,
+    pub role: String, // "any" | "original" | "check"
+}
+
 use crate::commands::scan::{FileInfo, GroupInfo};
 
 #[derive(Serialize)]
@@ -39,7 +45,7 @@ fn open_conn(app: &AppHandle) -> Result<dedupe_index::Connection, String> {
 // ── folder persistence ───────────────────────────────────────────────────────
 
 #[tauri::command]
-pub fn save_folders(app: AppHandle, folders: Vec<String>) -> Result<(), String> {
+pub fn save_folders(app: AppHandle, folders: Vec<FolderEntry>) -> Result<(), String> {
     let conn = open_conn(&app)?;
     let json = serde_json::to_string(&folders).map_err(|e| e.to_string())?;
     conn.execute(
@@ -50,7 +56,7 @@ pub fn save_folders(app: AppHandle, folders: Vec<String>) -> Result<(), String> 
 }
 
 #[tauri::command]
-pub fn load_folders(app: AppHandle) -> Result<Vec<String>, String> {
+pub fn load_folders(app: AppHandle) -> Result<Vec<FolderEntry>, String> {
     let path = db_path(&app).ok_or("cannot resolve app data dir")?;
     if !path.exists() {
         return Ok(vec![]);
@@ -65,7 +71,17 @@ pub fn load_folders(app: AppHandle) -> Result<Vec<String>, String> {
         .ok();
     match json {
         None => Ok(vec![]),
-        Some(j) => serde_json::from_str(&j).map_err(|e| e.to_string()),
+        Some(j) => {
+            // Try new format [{path, role}] first, fall back to old ["path"] format
+            if let Ok(entries) = serde_json::from_str::<Vec<FolderEntry>>(&j) {
+                return Ok(entries);
+            }
+            // Migrate from old string-array format
+            if let Ok(paths) = serde_json::from_str::<Vec<String>>(&j) {
+                return Ok(paths.into_iter().map(|p| FolderEntry { path: p, role: "any".to_string() }).collect());
+            }
+            Ok(vec![])
+        }
     }
 }
 
@@ -220,7 +236,8 @@ fn records_to_scanned(records: &[file_cache::CachedFile]) -> Vec<ScannedFile> {
 fn build_result(files: Vec<ScannedFile>, scanned_at: Option<String>) -> CachedScanResult {
     let total_files = files.len();
     let skipped = files.iter().filter(|f| f.error.is_some()).count();
-    let groups = grouper::build_groups(&files)
+    // Cached results use heuristic keeper (no role info available at load time)
+    let groups = grouper::build_groups_with_roles(&files, &[])
         .into_iter()
         .map(|g| {
             let file_infos = g.files.iter().map(|&idx| {
@@ -228,6 +245,7 @@ fn build_result(files: Vec<ScannedFile>, scanned_at: Option<String>) -> CachedSc
                 FileInfo {
                     path: f.path.to_string_lossy().to_string(),
                     size: f.size,
+                    mtime_ms: f.mtime_ns / 1_000_000,
                     is_keeper: idx == g.keeper,
                     error: f.error.clone(),
                 }

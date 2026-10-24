@@ -22,6 +22,7 @@ pub struct ScanProgress {
 pub struct FileInfo {
     pub path: String,
     pub size: u64,
+    pub mtime_ms: i64,
     pub is_keeper: bool,
     pub error: Option<String>,
 }
@@ -66,6 +67,7 @@ pub async fn pick_folder(app: AppHandle) -> Result<Option<String>, String> {
 #[tauri::command]
 pub async fn scan_folders(
     paths: Vec<String>,
+    original_folders: Vec<String>,
     app: AppHandle,
     window: tauri::Window,
 ) -> Result<ScanResult, String> {
@@ -198,9 +200,11 @@ pub async fn scan_folders(
         })
         .collect();
 
+    let orig_refs: Vec<&str> = original_folders.iter().map(|s| s.as_str()).collect();
+
     // Emit initial groups from cache hits alone
     if !all_files.is_empty() {
-        let groups = build_group_infos(&all_files);
+        let groups = build_group_infos(&all_files, &orig_refs);
         let _ = window.emit("scan-groups", ScanGroups {
             groups,
             scanned: 0,
@@ -218,7 +222,7 @@ pub async fn scan_folders(
         all_files.extend(new_files);
 
         let scanned = ((batch_idx + 1) * HASH_BATCH).min(total_to_hash);
-        let groups = build_group_infos(&all_files);
+        let groups = build_group_infos(&all_files, &orig_refs);
         let _ = window.emit("scan-groups", ScanGroups {
             groups,
             scanned,
@@ -250,7 +254,7 @@ pub async fn scan_folders(
     tracing::info!(
         "scan complete: {} files, {} groups, {} cache hits, {}ms",
         total_files,
-        build_group_infos(&all_files).len(),
+        build_group_infos(&all_files, &orig_refs).len(),
         cache_hit_count,
         duration_ms
     );
@@ -258,8 +262,8 @@ pub async fn scan_folders(
     Ok(ScanResult { total_files, skipped, duration_ms, cache_hits: cache_hit_count })
 }
 
-fn build_group_infos(files: &[scanner::ScannedFile]) -> Vec<GroupInfo> {
-    grouper::build_groups(files)
+fn build_group_infos(files: &[scanner::ScannedFile], original_dirs: &[&str]) -> Vec<GroupInfo> {
+    grouper::build_groups_with_roles(files, original_dirs)
         .into_iter()
         .map(|g| {
             let file_infos = g.files.iter().map(|&idx| {
@@ -267,6 +271,7 @@ fn build_group_infos(files: &[scanner::ScannedFile]) -> Vec<GroupInfo> {
                 FileInfo {
                     path: f.path.to_string_lossy().to_string(),
                     size: f.size,
+                    mtime_ms: f.mtime_ns / 1_000_000,
                     is_keeper: idx == g.keeper,
                     error: f.error.clone(),
                 }
