@@ -4,6 +4,7 @@ import './styles/reset.css';
 import { AppShell } from './components/AppShell';
 import { EmptyState } from './components/EmptyState';
 import type { MediaTab } from './components/TabBar';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 interface Folders {
   original?: string;
@@ -15,6 +16,18 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
   const [folders, setFolders] = useState<Folders>({});
+
+  useKeyboardShortcuts({
+    onSearch: () => searchRef.current?.focus(),
+    onCancel: () => {
+      if (document.activeElement === searchRef.current) {
+        setSearchQuery('');
+        searchRef.current?.blur();
+      }
+    },
+    onUndo: () => console.log('undo — T-022 will wire this'),
+    onPreview: () => console.log('preview — T-013 spike will wire this'),
+  });
 
   const handleDrop = (paths: string[]) => {
     const path = paths[0];
