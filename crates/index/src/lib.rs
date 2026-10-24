@@ -1,8 +1,11 @@
 pub mod db;
 pub mod error;
+pub mod file_cache;
 pub mod migrations;
 
 pub use error::IndexError;
+pub use rusqlite;
+pub use rusqlite::Connection;
 
 #[cfg(test)]
 mod tests {
