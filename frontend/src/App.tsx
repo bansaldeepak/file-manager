@@ -53,21 +53,35 @@ function App() {
   const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
   const [lastQuarantine, setLastQuarantine] = useState<QuarantineResult | null>(null);
   const [lastScanAt, setLastScanAt] = useState<string | null>(null);
+  const [lastScanDurationMs, setLastScanDurationMs] = useState<number | null>(null);
+
+  // Persist folders whenever they change
+  useEffect(() => {
+    if (folders.length > 0) {
+      invoke('save_folders', { folders }).catch(() => {});
+    }
+  }, [folders]);
 
   // Load cached results from previous scan on mount
   useEffect(() => {
     const load = async () => {
+      // Restore saved folder list
+      const savedFolders = await invoke<string[]>('load_folders').catch(() => [] as string[]);
+      if (savedFolders.length > 0) setFolders(savedFolders);
+
       // Try loading native cache first
       const result = await invoke<{
         groups: GroupInfo[];
         total_files: number;
         skipped: number;
         scanned_at: string | null;
+        scan_duration_ms: number | null;
       } | null>('load_cached').catch(() => null);
 
       if (result && result.groups.length > 0) {
         setGroups(result.groups);
         setLastScanAt(result.scanned_at);
+        setLastScanDurationMs(result.scan_duration_ms);
         setScanStatus('done');
         const skippedNote = result.skipped > 0 ? ` · ${result.skipped} skipped` : '';
         setScanProgress(`${result.total_files.toLocaleString()} files (cached)${skippedNote}`);
@@ -161,12 +175,16 @@ function App() {
     });
 
     try {
-      const result = await invoke<{ total_files: number; skipped: number }>(
+      const result = await invoke<{ total_files: number; skipped: number; duration_ms: number; cache_hits: number }>(
         'scan_folders',
         { paths: folders }
       );
+      const durationSec = (result.duration_ms / 1000).toFixed(1);
+      const cacheNote = result.cache_hits > 0 ? ` · ${result.cache_hits.toLocaleString()} from cache` : '';
       const skippedNote = result.skipped > 0 ? ` · ${result.skipped} skipped` : '';
-      setScanProgress(`${result.total_files.toLocaleString()} files scanned${skippedNote}`);
+      setLastScanDurationMs(result.duration_ms);
+      setLastScanAt(new Date().toLocaleString());
+      setScanProgress(`${result.total_files.toLocaleString()} files · ${durationSec}s${cacheNote}${skippedNote}`);
       setScanStatus('done');
     } catch (e) {
       setScanProgress(String(e));
@@ -274,7 +292,7 @@ function App() {
       sidebar={
         <Sidebar
           folders={folders}
-          scanState={{ status: scanStatus, progress: scanProgress, scanned: scanScanned, total: scanTotal, lastScanAt }}
+          scanState={{ status: scanStatus, progress: scanProgress, scanned: scanScanned, total: scanTotal, lastScanAt, lastScanDurationMs }}
           onAddFolder={handleAddFolder}
           onRemoveFolder={handleRemoveFolder}
           onScan={handleScan}

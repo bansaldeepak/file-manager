@@ -62,6 +62,8 @@ fn main() {
             commands::scan::scan_folders,
             commands::cache::load_cached,
             commands::cache::import_python_cache,
+            commands::cache::save_folders,
+            commands::cache::load_folders,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

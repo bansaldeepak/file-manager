@@ -6,6 +6,7 @@ interface ScanState {
   scanned?: number;
   total?: number;
   lastScanAt?: string | null;
+  lastScanDurationMs?: number | null;
 }
 
 interface SidebarProps {
@@ -85,7 +86,10 @@ export function Sidebar({
         )}
         {scanState.status === 'done' && scanState.lastScanAt && (
           <p className="sidebar-result" style={{ opacity: 0.6, fontSize: '11px' }}>
-            Last scan: {scanState.lastScanAt}
+            {scanState.lastScanAt}
+            {scanState.lastScanDurationMs != null && (
+              <> · {(scanState.lastScanDurationMs / 1000).toFixed(1)}s</>
+            )}
           </p>
         )}
         {scanState.status === 'error' && scanState.progress && (
