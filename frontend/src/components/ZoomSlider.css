@@ -1,0 +1,26 @@
+.zoom-slider {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  height: 100%;
+}
+
+.zoom-icon {
+  color: var(--color-text-muted);
+  user-select: none;
+  line-height: 1;
+}
+
+.zoom-small {
+  font-size: 10px;
+}
+
+.zoom-large {
+  font-size: 14px;
+}
+
+.zoom-range {
+  width: 100px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}

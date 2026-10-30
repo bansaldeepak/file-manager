@@ -1,0 +1,27 @@
+{
+  "red_100x100.jpg": {
+    "sha256": "a4a2e36c06da6fa5ed62af06da708aab9b7f7be1c507212e91ce416fee68d86b",
+    "pixel_hash": "19d8f12b46984c0da1d133eb508823aabfc4c4f499e63ce8291e9aa2e62541c3",
+    "size": 827
+  },
+  "red_100x100.png": {
+    "sha256": "d485d63486aa352c760ff6d9ddda692189ad533c5d506d3dcdbe6db482941b02",
+    "pixel_hash": "8233495cc8909fedd54e914391729cf2fb845fb0a65f44990fe0f1362b2094f7",
+    "size": 286
+  },
+  "red_100x100_copy.jpg": {
+    "sha256": "a4a2e36c06da6fa5ed62af06da708aab9b7f7be1c507212e91ce416fee68d86b",
+    "pixel_hash": "19d8f12b46984c0da1d133eb508823aabfc4c4f499e63ce8291e9aa2e62541c3",
+    "size": 827
+  },
+  "red_100x100_reencoded.jpg": {
+    "sha256": "f7b70219e94130bc18ee09268da6a5fd44f404d3671f58677bac81c32bdb21ab",
+    "pixel_hash": "19d8f12b46984c0da1d133eb508823aabfc4c4f499e63ce8291e9aa2e62541c3",
+    "size": 826
+  },
+  "red_200x200.jpg": {
+    "sha256": "290305390ccb258b3d6f89f24a99d31da50b7f9bc25701c288082743dab7365d",
+    "pixel_hash": "6d62a2294e8420b79bc1e8093011b8f2922bcb55bcf5735a652e85790281286f",
+    "size": 1307
+  }
+}

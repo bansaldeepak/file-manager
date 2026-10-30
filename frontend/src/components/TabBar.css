@@ -1,0 +1,29 @@
+.tab-bar {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+.tab-button {
+  padding: 0 var(--spacing-md);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 100ms ease, border-color 100ms ease;
+  white-space: nowrap;
+}
+
+.tab-button[data-active='true'] {
+  color: var(--color-text);
+  font-weight: 500;
+  border-bottom-color: var(--color-primary);
+}
+
+.tab-button:hover:not([data-active='true']) {
+  color: var(--color-text);
+}

@@ -1,0 +1,75 @@
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: 0 20px;
+  height: 100%;
+  width: 100%;
+}
+
+.action-bar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.action-bar-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.action-bar-count {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.action-bar-count strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.action-bar-hint {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.action-bar-savings {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.action-bar-savings-size {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.action-bar-quarantine-btn {
+  padding: 5px 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 80ms, opacity 80ms;
+}
+
+.action-bar-quarantine-btn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.action-bar-quarantine-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

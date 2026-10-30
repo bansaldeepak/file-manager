@@ -1,0 +1,52 @@
+:root {
+  --color-primary: #C83C2C;
+  --color-primary-hover: #A83020;
+  --color-on-primary: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-background: #F2F3F5;
+  --color-text: #1A1C20;
+  --color-text-muted: #6B707A;
+  --color-success: #2D7A4F;
+  --color-warning: #B8860B;
+  --color-error: #C9342D;
+  --color-destructive: #C9342D;
+  --color-border: color-mix(in srgb, var(--color-text) 10%, transparent);
+
+  --font-display: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  --font-body: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  --sidebar-width: 224px;
+  --inspector-width: 336px;
+  --toolbar-height: 52px;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-window: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #E05040;
+    --color-primary-hover: #C83C2C;
+    --color-surface: #1E2022;
+    --color-background: #161819;
+    --color-text: #E2E4E8;
+    --color-text-muted: #8A8D94;
+    --color-success: #3D9A60;
+    --color-warning: #DAA520;
+    --color-error: #FF6961;
+    --color-destructive: #FF6961;
+  }
+}
