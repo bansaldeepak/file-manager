@@ -23,11 +23,79 @@ pub fn cache_path(source: &str, max_px: u32) -> PathBuf {
     cache_root().join(prefix).join(filename)
 }
 
+fn is_video(path: &str) -> bool {
+    matches!(
+        std::path::Path::new(path)
+            .extension()
+            .and_then(|e| e.to_str())
+            .map(|e| e.to_ascii_lowercase())
+            .as_deref(),
+        Some("mp4" | "mov" | "avi" | "mkv" | "m4v" | "wmv" | "flv" | "webm" | "3gp")
+    )
+}
+
+fn find_ffmpeg() -> Option<String> {
+    for path in ["/opt/homebrew/bin/ffmpeg", "/usr/local/bin/ffmpeg", "/usr/bin/ffmpeg"] {
+        if std::path::Path::new(path).exists() {
+            return Some(path.to_string());
+        }
+    }
+    // Fall back to PATH lookup via `which`
+    std::process::Command::new("which")
+        .arg("ffmpeg")
+        .output()
+        .ok()
+        .filter(|o| o.status.success())
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+}
+
+fn ffmpeg_extract(ffmpeg: &str, source: &str, max_px: u32, out: &std::path::Path, seek_secs: u32) -> bool {
+    let scale = format!("scale={max_px}:{max_px}:force_original_aspect_ratio=decrease");
+    let mut cmd = std::process::Command::new(ffmpeg);
+    if seek_secs > 0 {
+        cmd.args(["-ss", &seek_secs.to_string()]);
+    }
+    cmd.args([
+        "-i", source,
+        "-vframes", "1",
+        "-vf", &scale,
+        "-q:v", "3",
+        "-y",
+        out.to_str().unwrap_or(""),
+    ])
+    .stdout(std::process::Stdio::null())
+    .stderr(std::process::Stdio::null())
+    .status()
+    .map(|s| s.success())
+    .unwrap_or(false)
+    && out.exists()
+}
+
+fn generate_video_thumbnail(source: &str, max_px: u32, out: &std::path::Path) -> Result<(), String> {
+    let ffmpeg = find_ffmpeg().ok_or("ffmpeg not found")?;
+    if let Some(parent) = out.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| format!("mkdir failed: {e}"))?;
+    }
+    // Try at 1s first (most videos have content there); fall back to frame 0
+    if ffmpeg_extract(&ffmpeg, source, max_px, out, 1) || ffmpeg_extract(&ffmpeg, source, max_px, out, 0) {
+        Ok(())
+    } else {
+        Err("ffmpeg produced no output".to_string())
+    }
+}
+
 /// Returns the path to a JPEG thumbnail, generating and caching it on first call.
 /// Subsequent calls for the same (source, max_px) return instantly from disk.
 pub fn get_or_generate(source: &str, max_px: u32) -> Result<PathBuf, String> {
     let out = cache_path(source, max_px);
     if out.exists() {
+        return Ok(out);
+    }
+
+    if is_video(source) {
+        generate_video_thumbnail(source, max_px, &out)?;
         return Ok(out);
     }
 
