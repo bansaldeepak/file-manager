@@ -267,6 +267,15 @@
   backdrop-filter: blur(4px);
 }
 
+.keeper-card-badge--keeper {
+  top: 6px;
+  left: 6px;
+  bottom: auto;
+  right: auto;
+  background: color-mix(in srgb, var(--color-success) 85%, black);
+  color: #fff;
+}
+
 .keeper-card-badge--exact {
   background: color-mix(in srgb, var(--color-primary) 85%, black);
   color: #fff;
