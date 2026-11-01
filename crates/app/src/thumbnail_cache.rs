@@ -51,7 +51,7 @@ fn find_ffmpeg() -> Option<String> {
         .filter(|s| !s.is_empty())
 }
 
-fn ffmpeg_extract(ffmpeg: &str, source: &str, max_px: u32, out: &std::path::Path, seek_secs: u32) -> bool {
+fn ffmpeg_extract(ffmpeg: &str, source: &str, max_px: u32, out_str: &str, seek_secs: u32) -> bool {
     let scale = format!("scale={max_px}:{max_px}:force_original_aspect_ratio=decrease");
     let mut cmd = std::process::Command::new(ffmpeg);
     if seek_secs > 0 {
@@ -63,23 +63,24 @@ fn ffmpeg_extract(ffmpeg: &str, source: &str, max_px: u32, out: &std::path::Path
         "-vf", &scale,
         "-q:v", "3",
         "-y",
-        out.to_str().unwrap_or(""),
+        out_str,
     ])
     .stdout(std::process::Stdio::null())
     .stderr(std::process::Stdio::null())
     .status()
     .map(|s| s.success())
     .unwrap_or(false)
-    && out.exists()
+    && std::path::Path::new(out_str).exists()
 }
 
 fn generate_video_thumbnail(source: &str, max_px: u32, out: &std::path::Path) -> Result<(), String> {
     let ffmpeg = find_ffmpeg().ok_or("ffmpeg not found")?;
+    let out_str = out.to_str().ok_or("cache path is not valid UTF-8")?;
     if let Some(parent) = out.parent() {
         std::fs::create_dir_all(parent).map_err(|e| format!("mkdir failed: {e}"))?;
     }
     // Try at 1s first (most videos have content there); fall back to frame 0
-    if ffmpeg_extract(&ffmpeg, source, max_px, out, 1) || ffmpeg_extract(&ffmpeg, source, max_px, out, 0) {
+    if ffmpeg_extract(&ffmpeg, source, max_px, out_str, 1) || ffmpeg_extract(&ffmpeg, source, max_px, out_str, 0) {
         Ok(())
     } else {
         Err("ffmpeg produced no output".to_string())
