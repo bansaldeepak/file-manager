@@ -47,8 +47,10 @@
 }
 
 .action-bar-savings-size {
+  font-family: var(--font-mono);
   font-weight: 600;
   color: var(--color-text);
+  font-variant-numeric: tabular-nums;
 }
 
 .action-bar-quarantine-btn {

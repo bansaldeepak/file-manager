@@ -79,13 +79,17 @@ function CopyCard({
       onKeyDown={e => e.key === 'Enter' && onFocus()}
     >
       <div className="di-copy-thumb-wrap">
-        <img
-          className="di-copy-thumb"
-          src={src}
-          alt={basename(file.path)}
-          draggable={false}
-          loading="lazy"
-        />
+        {src ? (
+          <img
+            className="di-copy-thumb"
+            src={src}
+            alt={basename(file.path)}
+            draggable={false}
+            loading="lazy"
+          />
+        ) : (
+          <div className="di-copy-thumb--shimmer" />
+        )}
         <button
           className={`di-copy-check${isChecked ? ' di-copy-check--on' : ''}`}
           onClick={onToggle}
@@ -109,6 +113,7 @@ function PreviewImage({ file, onLoad }: {
   onLoad: (w: number, h: number) => void;
 }) {
   const src = useThumbnail(file.path, 800);
+  if (!src) return <div className="di-preview-shimmer" />;
   return (
     <img
       key={file.path}

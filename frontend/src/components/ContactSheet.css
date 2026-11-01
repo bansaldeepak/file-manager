@@ -54,6 +54,7 @@
 }
 
 .filter-pill-count {
+  font-family: var(--font-mono);
   font-size: 11px;
   opacity: 0.75;
   font-variant-numeric: tabular-nums;
@@ -128,8 +129,8 @@
 }
 
 .breadcrumbs-seg {
-  font-family: var(--font-body);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--color-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -138,8 +139,8 @@
 }
 
 .breadcrumbs-leaf {
-  font-family: var(--font-body);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 600;
   color: var(--color-text);
   overflow: hidden;
@@ -150,19 +151,20 @@
 /* ── folder section header ───────────────────────────────── */
 
 .folder-section-stats {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--color-text-muted);
   white-space: nowrap;
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .folder-section-badge {
   font-family: var(--font-body);
   font-size: 10px;
   font-weight: 600;
-  color: #e07b00;
-  background: color-mix(in srgb, #e07b00 12%, transparent);
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
   border-radius: 3px;
   padding: 1px 6px;
   flex-shrink: 0;
@@ -241,6 +243,17 @@
   background: color-mix(in srgb, var(--color-text) 5%, transparent);
 }
 
+.keeper-card-thumb--shimmer {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-text) 4%, transparent) 25%,
+    color-mix(in srgb, var(--color-text) 9%, transparent) 50%,
+    color-mix(in srgb, var(--color-text) 4%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
 .keeper-card-badge {
   position: absolute;
   bottom: 6px;
@@ -260,7 +273,7 @@
 }
 
 .keeper-card-badge--pixel {
-  background: color-mix(in srgb, #e07b00 85%, black);
+  background: color-mix(in srgb, var(--color-warning) 85%, black);
   color: #fff;
 }
 
@@ -297,10 +310,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  direction: rtl;
+  text-align: left;
 }
 
 .keeper-card-size {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 10px;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;

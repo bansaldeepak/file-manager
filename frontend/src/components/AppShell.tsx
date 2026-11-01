@@ -30,9 +30,9 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <div className="app-shell">
-      <div className="toolbar">
+      <div className="toolbar" data-tauri-drag-region>
         <TabBar value={activeTab} onChange={onTabChange} />
-        <div className="toolbar-spacer" />
+        <div className="toolbar-spacer" data-tauri-drag-region />
         <div className="toolbar-right">
           <SearchBar value={searchQuery} onChange={onSearchChange} focusRef={searchRef} />
         </div>

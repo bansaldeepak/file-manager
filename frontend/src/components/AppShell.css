@@ -17,6 +17,14 @@
   align-items: center;
   padding: 0 20px;
   gap: var(--spacing-sm);
+  -webkit-app-region: drag;
+}
+
+.toolbar button,
+.toolbar input,
+.toolbar a,
+.toolbar-right {
+  -webkit-app-region: no-drag;
 }
 
 .toolbar-spacer {

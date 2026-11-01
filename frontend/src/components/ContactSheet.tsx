@@ -172,7 +172,7 @@ function KeeperCard({
       <div className="keeper-card-thumb-wrap" style={{ width: thumbnailSize, height: thumbnailSize }}>
         {keeper.error ? (
           <div className="keeper-card-error" style={{ width: thumbnailSize, height: thumbnailSize }}>⚠</div>
-        ) : (
+        ) : src ? (
           <img
             className="keeper-card-thumb"
             src={src}
@@ -181,6 +181,9 @@ function KeeperCard({
             loading="lazy"
             draggable={false}
           />
+        ) : (
+          <div className="keeper-card-thumb keeper-card-thumb--shimmer"
+               style={{ width: thumbnailSize, height: thumbnailSize }} />
         )}
         <span className={`keeper-card-badge keeper-card-badge--${group.match_type}`}>
           ×{copies.length} {group.match_type === 'exact' ? 'exact' : 'similar'}
