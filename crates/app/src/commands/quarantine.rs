@@ -48,7 +48,7 @@ pub struct RestoreResult {
 fn quarantine_root() -> PathBuf {
     dirs::data_local_dir()
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("Arcitae/Quarantine")
+        .join("Dedupe/Quarantine")
 }
 
 /// Mirror the absolute source path under the quarantine root, then apply

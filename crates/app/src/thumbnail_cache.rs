@@ -6,7 +6,7 @@ use image::imageops::FilterType;
 pub fn cache_root() -> PathBuf {
     dirs::cache_dir()
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("Arcitae/thumbnails")
+        .join("Dedupe/thumbnails")
 }
 
 fn path_hash(path: &str) -> u64 {

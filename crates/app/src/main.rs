@@ -31,14 +31,14 @@ fn main() {
 
     let log_dir = dirs::data_local_dir()
         .unwrap_or_else(|| std::path::PathBuf::from("."))
-        .join("Arcitae/logs");
+        .join("Dedupe/logs");
 
     let _log_guard = dedupe_app::logging::init(&log_dir);
-    tracing::info!("Arcitae Dedupe starting");
+    tracing::info!("Dedupe starting");
 
     let db_path = dirs::data_local_dir()
         .unwrap_or_else(|| std::path::PathBuf::from("."))
-        .join("Arcitae/dedupe.db");
+        .join("Dedupe/dedupe.db");
 
     let conn = match dedupe_app::startup::init_database(&db_path) {
         Ok(c) => c,
