@@ -156,8 +156,8 @@
 }
 
 .folder-roles-legend-item--check {
-  color: #e07b00;
-  background: color-mix(in srgb, #e07b00 12%, transparent);
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
 }
 
 .folder-role-group {
@@ -191,9 +191,9 @@
 }
 
 .folder-role-btn--check-active {
-  border-color: #e07b00;
-  color: #e07b00;
-  background: color-mix(in srgb, #e07b00 18%, transparent);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 18%, transparent);
 }
 
 .folder-role-btn:hover:not(.folder-role-btn--orig-active):not(.folder-role-btn--check-active) {
@@ -261,10 +261,11 @@
 
 .sidebar-progress,
 .sidebar-result {
-  font-family: var(--font-body);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--color-text-muted);
   margin: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .sidebar-error {

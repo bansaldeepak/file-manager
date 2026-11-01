@@ -121,12 +121,12 @@
 
 .qv-delete-btn {
   background: transparent;
-  border: 1px solid #c0392b;
+  border: 1px solid var(--color-destructive);
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
   font-size: 11px;
   font-weight: 600;
-  color: #c0392b;
+  color: var(--color-destructive);
   padding: 4px 12px;
   cursor: pointer;
   transition: background 80ms, color 80ms;
@@ -134,8 +134,8 @@
 }
 
 .qv-delete-btn:hover:not(:disabled) {
-  background: #c0392b;
-  color: #fff;
+  background: var(--color-destructive);
+  color: var(--color-on-primary);
 }
 
 .qv-delete-btn:disabled {
@@ -204,20 +204,20 @@
 }
 
 .qv-confirm-delete {
-  background: #c0392b;
+  background: var(--color-destructive);
   border: none;
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-on-primary);
   padding: 6px 14px;
   cursor: pointer;
   transition: background 80ms;
 }
 
 .qv-confirm-delete:hover {
-  background: #a93226;
+  background: color-mix(in srgb, var(--color-destructive) 85%, black);
 }
 
 /* ── grid ────────────────────────────────────────────────── */
@@ -269,6 +269,19 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.qv-card-thumb--loading {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-text) 4%, transparent) 25%,
+    color-mix(in srgb, var(--color-text) 9%, transparent) 50%,
+    color-mix(in srgb, var(--color-text) 4%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
 }
 
 /* circular checkbox top-left */
@@ -343,6 +356,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  direction: rtl;
+  text-align: left;
 }
 
 .qv-crumbs {
@@ -360,7 +375,7 @@
 }
 
 .qv-crumbs-seg {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 10px;
   color: var(--color-text-muted);
   overflow: hidden;
@@ -369,7 +384,7 @@
 }
 
 .qv-crumbs-leaf {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 10px;
   color: var(--color-text-muted);
   font-weight: 500;
@@ -379,7 +394,7 @@
 }
 
 .qv-card-size {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 10px;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;

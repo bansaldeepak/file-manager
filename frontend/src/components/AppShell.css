@@ -15,8 +15,16 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 20px 0 84px; /* 84px left: clear macOS traffic-light buttons */
   gap: var(--spacing-sm);
+  -webkit-app-region: drag;
+}
+
+.toolbar button,
+.toolbar input,
+.toolbar a,
+.toolbar-right {
+  -webkit-app-region: no-drag;
 }
 
 .toolbar-spacer {

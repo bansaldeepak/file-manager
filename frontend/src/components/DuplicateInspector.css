@@ -46,6 +46,33 @@
   display: block;
 }
 
+.di-preview-shimmer {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-text) 4%, transparent) 25%,
+    color-mix(in srgb, var(--color-text) 9%, transparent) 50%,
+    color-mix(in srgb, var(--color-text) 4%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.di-copy-thumb--shimmer {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-text) 4%, transparent) 25%,
+    color-mix(in srgb, var(--color-text) 9%, transparent) 50%,
+    color-mix(in srgb, var(--color-text) 4%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 /* ── badge + quick look ──────────────────────────────────── */
 
 .di-badge-row {
@@ -73,8 +100,8 @@
 }
 
 .di-badge--copy {
-  background: color-mix(in srgb, #e07b00 14%, transparent);
-  color: #e07b00;
+  background: color-mix(in srgb, var(--color-warning) 14%, transparent);
+  color: var(--color-warning);
 }
 
 .di-ql-btn {
@@ -118,8 +145,8 @@
 }
 
 .di-meta dd {
-  font-family: var(--font-body);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--color-text);
   margin: 0;
   overflow: hidden;
@@ -138,6 +165,7 @@
   flex-wrap: nowrap;
   overflow: hidden;
   min-width: 0;
+  font-family: var(--font-mono);
   font-size: 11px;
 }
 
@@ -294,12 +322,12 @@
 }
 
 .di-copy-label {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 10px;
   color: var(--color-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: center;
+  text-align: left;
   padding: 0 2px;
 }
